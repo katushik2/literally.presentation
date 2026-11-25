@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ЛИТЕРА — Презентация продукта в стиле Типографика</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F3F2EE;
+      --surface: #E7E5DE;
+      --ink: #111111;
+      --muted: #5F5E59;
+      --accent: #E6331A;
+      --border: #111111;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Оверлей 12-колонной швейцарской сетки (клавиша G) */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 900;
+      display: none;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      padding: 0 32px;
+    }
+    .grid-overlay.active {
+      display: grid;
+    }
+    .grid-overlay div {
+      background: rgba(230, 51, 26, 0.08);
+      border-left: 1px dashed rgba(230, 51, 26, 0.35);
+      border-right: 1px dashed rgba(230, 51, 26, 0.35);
+      height: 100%;
+    }
+
+    /* Верхний колонтитул */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      background: var(--bg);
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 100;
+    }
+    .topbar-group {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .badge-red {
+      background: var(--accent);
+      color: #FFF;
+      padding: 2px 7px;
+      font-weight: 700;
+    }
+    .grid-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: 0.15s;
+    }
+    .grid-btn:hover, .grid-btn.active {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* Контейнер слайдов */
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      padding-top: 44px;
+      padding-bottom: 48px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 44px 0 48px 0;
+      padding: 28px 32px;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Типографика слайдов */
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .kicker::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+    }
+
+    h1.hero-title {
+      font-size: clamp(4.2rem, 11vw, 9.5rem);
+      font-weight: 900;
+      line-height: 0.88;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+    }
+
+    h2.slide-title {
+      font-size: clamp(2rem, 4.2vw, 3.8rem);
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      text-transform: uppercase;
+      max-width: 960px;
+    }
+
+    .lead-text {
+      font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+      line-height: 1.4;
+      font-weight: 500;
+      max-width: 680px;
+    }
+
+    .mono-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Модульные сетки */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 2px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 2px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 2px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cell-num {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .cell-big-stat {
+      font-size: clamp(2.4rem, 4vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .cell h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .cell p {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: #262624;
+    }
+
+    /* Слайд 1: Обложка */
+    .cover-layout {
+      display: grid;
+      grid-template-columns: 8fr 4fr;
+      gap: 24px;
+      height: 100%;
+      align-items: stretch;
+    }
+    .cover-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1.5px solid var(--border);
+      padding-right: 24px;
+    }
+    .cover-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .poster-specimen {
+      border: 1.5px solid var(--border);
+      padding: 20px;
+      background: var(--ink);
+      color: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 240px;
+    }
+    .poster-specimen .aa {
+      font-size: 5.5rem;
+      font-weight: 900;
+      line-height: 0.85;
+      letter-spacing: -0.05em;
+    }
+
+    /* Слайд 7: Дизайн-система */
+    .swatch-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1.5px solid var(--border);
+      margin-top: 12px;
+    }
+    .swatch {
+      padding: 18px;
+      border-right: 1px solid var(--border);
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .swatch:last-child { border-right: none; }
+
+    /* Слайд 8: Интерактивный Десктоп-Мокап */
+    .mockup-window {
+      border: 2px solid var(--border);
+      background: #FAF9F6;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: 440px;
+    }
+    .mockup-bar {
+      border-bottom: 1.5px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .mockup-tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .m-tab {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .m-tab.active {
+      background: var(--accent);
+      color: #FFF;
+      border-color: var(--accent);
+    }
+    .mockup-body {
+      display: grid;
+      grid-template-columns: 220px 1fr 240px;
+      flex: 1;
+      overflow: hidden;
+    }
+    .m-col {
+      padding: 16px;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+    }
+    .m-col:last-child { border-right: none; }
+    .m-index-item {
+      padding: 6px 0;
+      border-bottom: 1px solid #D5D3CC;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .m-index-item.active { color: var(--accent); }
+    .m-article-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .m-article-text {
+      font-size: 13px;
+      line-height: 1.55;
+      max-width: 54ch;
+    }
+    .m-highlight {
+      background: rgba(230, 51, 26, 0.16);
+      border-bottom: 1.5px solid var(--accent);
+      padding: 0 2px;
+    }
+    .m-margin-note {
+      border-left: 2px solid var(--accent);
+      padding-left: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    /* Слайд 9: Мобильные мокапы */
+    .phones-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+    .phone-frame {
+      border: 2px solid var(--border);
+      background: #FAF9F6;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 360px;
+    }
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+
+    /* Нижняя панель навигации */
+    .bottombar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: var(--bg);
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+    .progress-track {
+      position: absolute;
+      top: -3px;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-btn {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--ink);
+      color: var(--bg);
+    }
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .slide-dots {
+      display: flex;
+      gap: 4px;
+    }
+    .dot-btn {
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .dot-btn.active {
+      background: var(--accent);
+      color: #FFF;
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 960px) {
+      .cover-layout, .grid-2, .grid-3, .grid-4, .mockup-body, .phones-wrap, .swatch-row {
+        grid-template-columns: 1fr;
+      }
+      .cover-left { border-right: none; padding-right: 0; }
+      .slide-dots { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Визуализация 12-колонной модульной сетки -->
+  <div class="grid-overlay" id="gridOverlay">
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+  </div>
+
+  <!-- Верхний колонтитул -->
+  <header class="topbar">
+    <div class="topbar-group">
+      <span class="badge-red">ЛИТЕРА // 01</span>
+      <span>ПРОДУКТОВЫЙ КОНЦЕПТ</span>
+    </div>
+    <div class="topbar-group">
+      <span>СТИЛЬ: ТИПОГРАФИКА (SWISS INTERNATIONAL)</span>
+      <button class="grid-btn" id="gridBtn" onclick="toggleGrid()">СЕТКА [G]</button>
+    </div>
+  </header>
+
+  <main class="deck" id="deck">
+
+    <!-- СЛАЙД 01: ОБЛОЖКА -->
+    <section class="slide active" data-title="Обложка">
+      <div class="cover-layout">
+        <div class="cover-left">
+          <div>
+            <div class="kicker">СЛАЙД 01 / ГРУППОВОЙ ПРОЕКТ</div>
+            <h1 class="hero-title">ЛИТЕРА</h1>
+          </div>
+          <div>
+            <p class="lead-text" style="margin-bottom: 18px;">
+              Цифровая среда для глубокого чтения, конспектов и сборки исследований, построенная по законам швейцарской типографики.
+            </p>
+            <div class="mono-meta">
+              ФОРМАТ: ВЕБ-СЕРВИС И МОБИЛЬНОЕ ПРИЛОЖЕНИЕ // ВЕРСИЯ 1.0 // 2026
+            </div>
+          </div>
+        </div>
+        <div class="cover-right">
+          <div class="poster-specimen">
+            <div class="mono-meta" style="color: #A8A69E;">МОДУЛЬНАЯ СИСТЕМА ТЕКСТА</div>
+            <div class="aa">Аа<span style="color: var(--accent);">.</span></div>
+            <div class="mono-meta" style="color: #F3F2EE;">
+              12 КОЛОНОК · КЕГЛЬ КАК НАВИГАЦИЯ · НОЛЬ ВИЗУАЛЬНОГО МУСОРА
+            </div>
+          </div>
+          <div style="border-top: 2px solid var(--border); padding-top: 14px;">
+            <div class="mono-meta" style="color: var(--ink); font-weight: 700;">АВТОРЫ ПРОЕКТА:</div>
+            <div class="mono-meta">Катя Чурюмова · Полина Асташкина</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЛАЙД 02: МАНИФЕСТ СТИЛЯ -->
+    <section class="slide" data-title="Код стиля">
+      <div>
+        <div class="kicker">СЛАЙД 02 / ВЫБРАННЫЙ СТИЛЬ: ТИПОГРАФИКА</div>
+        <h2 class="slide-title">ШРИФТ КАК ГЛАВНЫЙ АРХИТЕКТОР ИНТЕРФЕЙСА</h2>
+      </div>
+      <div class="grid-3">
+        <div class="cell">
+          <div class="cell-num">ПРИНЦИП 01</div>
+          <h3>МОДУЛЬНАЯ СЕТКА</h3>
+          <p>Жёсткая математическая структура полосы задаёт порядок. Пользователь считывает иерархию смыслов за доли секунды без декоративных подсказок.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ПРИНЦИП 02</div>
+          <h3>КОНТРАСТ КЕГЛЕЙ</h3>
+          <p>Крупные акцидентные заголовки работают как навигационные маяки, а наборный текст с оптимальной длиной строки (65 знаков) снижает утомляемость глаз.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ПРИНЦИП 03</div>
+          <h3>ОТКАЗ ОТ ДЕКОРА</h3>
+          <p>Никаких теней, градиентов, стоковых иллюстраций и всплывающих окон. Только чистая бумага, типографская сажа и один сигнальный красный акцент.</p>
+        </div>
+      </div>
+      <div class="mono-meta">ВДОХНОВЕНИЕ: ЙОЗЕФ МЮЛЛЕР-БРОКМАНН И МЕЖДУНАРОДНЫЙ ТИПОГРАФИЧЕСКИЙ СТИЛЬ (1950–1960)</div>
+    </section>
+
+    <!-- СЛАЙД 03: ПРОБЛЕМА -->
+    <section class="slide" data-title="Проблема">
+      <div>
+        <div class="kicker">СЛАЙД 03 / ПРОБЛЕМА ПОЛЬЗОВАТЕЛЕЙ</div>
+        <h2 class="slide-title">ЦИФРОВОЙ ШУМ РАЗРУШАЕТ ГЛУБОКОЕ ЧТЕНИЕ</h2>
+      </div>
+      <div class="grid-3">
+        <div class="cell">
+          <div class="cell-num">БОЛЬ 01 // ПЕРЕГРУЗКА</div>
+          <div class="cell-big-stat">47 сек</div>
+          <h3>КЛИПОВЫЙ ФОКУС</h3>
+          <p>Баннеры, виджеты рекомендаций и всплывающие окна на сайтах каждые 47 секунд сбивают концентрацию при чтении сложных статей и исследований.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">БОЛЬ 02 // ФРАГМЕНТАЦИЯ</div>
+          <div class="cell-big-stat" style="color: var(--accent);">38+</div>
+          <h3>КЛАДБИЩЕ ВКЛАДОК</h3>
+          <p>Ссылки сохраняются в «Избранном» в Telegram, PDF лежат в загрузках, а цитаты теряются в разных заметках без привязки к первоисточнику.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">БОЛЬ 03 // ПЛОХАЯ ВЁРСТКА</div>
+          <div class="cell-big-stat">71%</div>
+          <h3>УСТАЛОСТЬ ОТ ЭКРАНА</h3>
+          <p>Слишком широкие строки текста, мелкий серый шрифт и хаотичные интерфейсы заставляют бросать лонгриды и научные работы на середине.</p>
+        </div>
+      </div>
+      <div class="mono-meta">ИСТОЧНИК: ОПРОС 64 СТУДЕНТОВ И РЕДАКТОРОВ О ПРИВЫЧКАХ РАБОТЫ С ТЕКСТАМИ (2026)</div>
+    </section>
+
+    <!-- СЛАЙД 04: ИДЕЯ ПРОДУКТА -->
+    <section class="slide" data-title="Идея продукта">
+      <div>
+        <div class="kicker">СЛАЙД 04 / ИДЕЯ ПРОДУКТА</div>
+        <h2 class="slide-title">ПРЕВРАЩАЕМ ХАОС ССЫЛОК И PDF В ЧИСТУЮ ЖУРНАЛЬНУЮ ПОЛОСУ</h2>
+      </div>
+      <div class="grid-2">
+        <div class="cell" style="background: var(--ink); color: var(--bg);">
+          <div class="cell-num">СУТЬ РЕШЕНИЯ</div>
+          <h3 style="font-size: 1.6rem; color: var(--bg);">«ЛИТЕРА» — ЭТО УМНЫЙ ТИПОГРАФИЧЕСКИЙ ВЕРСТАЛЬЩИК ДЛЯ ВАШИХ ЗНАНИЙ</h3>
+          <p style="color: #D7D5CE;">
+            Вы отправляете в сервис любую веб-страницу, PDF-документ или аудиозапись лекции. Алгоритм очищает материал от визуального шума и автоматически верстает его по строгой модульной сетке с живыми полями для ваших заметок.
+          </p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">КАК МЕНЯЕТСЯ ОПЫТ</div>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+              <strong>БЫЛО:</strong> 40 открытых вкладок браузера, реклама по бокам, выписки в отдельном файле.
+            </div>
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+              <strong>СТАЛО:</strong> Единая библиотека с крупным рубрикатором, идеальной строкой и заметками прямо на полях абзаца.
+            </div>
+            <div>
+              <strong>РЕЗУЛЬТАТ:</strong> Готовый структурированный PDF-зин или конспект к экзамену за 1 клик.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mono-meta">ФОРМУЛА: КОНТЕНТ ПОЛЬЗОВАТЕЛЯ + ШВЕЙЦАРСКАЯ СЕТКА = ЧИСТОЕ МЫШЛЕНИЕ</div>
+    </section>
+
+    <!-- СЛАЙД 05: ФИШКИ ПРОДУКТА -->
+    <section class="slide" data-title="Фишки">
+      <div>
+        <div class="kicker">СЛАЙД 05 / КЛЮЧЕВЫЕ ФИШКИ ПРОДУКТА</div>
+        <h2 class="slide-title">ЧЕТЫРЕ ИНСТРУМЕНТА ТИПОГРАФИЧЕСКОЙ ПРОДУКТИВНОСТИ</h2>
+      </div>
+      <div class="grid-4">
+        <div class="cell">
+          <div class="cell-num">ФИШКА 01</div>
+          <h3>АВТО-ВЁРСТКА ПО СЕТКЕ</h3>
+          <p>Мгновенная очистка любой статьи или PDF от баннеров. Текст выстраивается в колонку шириной 65 знаков с выверенным интерлиньяжем.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ФИШКА 02</div>
+          <h3>ЖИВЫЕ МАРГИНАЛИИ</h3>
+          <p>Заметки и комментарии не прячутся в скрытых меню, а выносятся на широкое правое поле точно напротив выделенной цитаты — как в научной книге.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ФИШКА 03</div>
+          <h3>ИНДЕКС ВМЕСТО ПАПОК</h3>
+          <p>Отказ от сложных древовидных папок. Вся база знаний организована через крупный типографический рубрикатор: по кеглю важности, дате и тегу.</p>
+        </div>
+        <div class="cell" style="background: var(--surface);">
+          <div class="cell-num">ФИШКА 04 // KILLER FEATURE</div>
+          <h3>СБОРКА PDF-ЗИНА</h3>
+          <p>Выделенные за неделю тезисы одним нажатием превращаются в оформленный конспект-брошюру с автогенерируемой швейцарской обложкой.</p>
+        </div>
+      </div>
+      <div class="mono-meta">ДОСТУПНО В БРАУЗЕРЕ, НА IOS / IPADOS И ЧЕРЕЗ БЫСТРОЕ СОХРАНЕНИЕ В TELEGRAM</div>
+    </section>
+
+    <!-- СЛАЙД 06: ЦЕЛЕВАЯ АУДИТОРИЯ -->
+    <section class="slide" data-title="Аудитория">
+      <div>
+        <div class="kicker">СЛАЙД 06 / ЦЕЛЕВАЯ АУДИТОРИЯ</div>
+        <h2 class="slide-title">ДЛЯ ТЕХ, ЧЬЯ РАБОТА И УЧЁБА СТРОЯТСЯ НА ТЕКСТАХ</h2>
+      </div>
+      <div class="grid-3">
+        <div class="cell">
+          <div class="cell-num">СЕГМЕНТ 01 // 18–25 ЛЕТ</div>
+          <h3>СТУДЕНТЫ И ИССЛЕДОВАТЕЛИ</h3>
+          <p><strong>Задача:</strong> подготовка курсовых, дипломов и семинаров по десяткам PDF-источников.<br><br><strong>Ценность:</strong> маргиналии и мгновенная сборка цитат в единый конспект без потери ссылок.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">СЕГМЕНТ 02 // 22–40 ЛЕТ</div>
+          <h3>ЖУРНАЛИСТЫ И РЕДАКТОРЫ</h3>
+          <p><strong>Задача:</strong> фактчекинг, анализ отчётов и подготовка лонгридов в жёсткие дедлайны.<br><br><strong>Ценность:</strong> чистая полоса без рекламы и быстрый поиск по ключевым тезисам.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">СЕГМЕНТ 03 // 20–35 ЛЕТ</div>
+          <h3>ДИЗАЙНЕРЫ И КРЕАТОРЫ</h3>
+          <p><strong>Задача:</strong> сохранение визуальной гигиены и ведение осознанной базы знаний.<br><br><strong>Ценность:</strong> эстетика швейцарского плаката в ежедневном рабочем инструменте.</p>
+        </div>
+      </div>
+      <div class="mono-meta">ЯДРО АУДИТОРИИ: ЛЮДИ ИНТЕЛЛЕКТУАЛЬНОГО ТРУДА В КРУПНЫХ ГОРОДАХ</div>
+    </section>
+
+    <!-- СЛАЙД 07: ДИЗАЙН-СИСТЕМА ПРОДУКТА -->
+    <section class="slide" data-title="Дизайн-система">
+      <div>
+        <div class="kicker">СЛАЙД 07 / ДИЗАЙН САМОГО ПРОДУКТА</div>
+        <h2 class="slide-title">ВИЗУАЛЬНЫЙ КОД ИНТЕРФЕЙСА «ЛИТЕРЫ»</h2>
+      </div>
+      <div>
+        <div class="grid-2">
+          <div class="cell">
+            <div class="cell-num">ШРИФТОВАЯ ПАРА</div>
+            <h3>INTER + JETBRAINS MONO</h3>
+            <p>Нео-гротеск <strong>Inter</strong> отвечает за монументальные заголовки и комфортное чтение основного массива текста. Моноширинный <strong>JetBrains Mono</strong> маркирует индексы, время чтения и метаданные.</p>
+          </div>
+          <div class="cell">
+            <div class="cell-num">АНАТОМИЯ ПОЛОСЫ</div>
+            <h3>12 КОЛОНОК И ПРАВИЛО 65 ЗНАКОВ</h3>
+            <p>3 колонки — рубрикатор-индекс, 6 колонок — основная текстовая полоса, 3 колонки — зона маргиналий. Жёсткие линии толщиной 1 px разделяют смысловые блоки.</p>
+          </div>
+        </div>
+        <div class="swatch-row">
+          <div class="swatch" style="background: #F3F2EE; color: #111111;">
+            <span>БУМАГА / ФОН</span>
+            <strong>#F3F2EE</strong>
+          </div>
+          <div class="swatch" style="background: #111111; color: #F3F2EE;">
+            <span>САЖА / ТЕКСТ</span>
+            <strong>#111111</strong>
+          </div>
+          <div class="swatch" style="background: #E6331A; color: #FFFFFF;">
+            <span>КИНОВАРЬ / АКЦЕНТ</span>
+            <strong>#E6331A</strong>
+          </div>
+          <div class="swatch" style="background: #E7E5DE; color: #111111;">
+            <span>ПЛАШКА / МОДУЛЬ</span>
+            <strong>#E7E5DE</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЛАЙД 08: МОКАП 01 (ИНТЕРАКТИВНЫЙ ДЕСКТОП) -->
+    <section class="slide" data-title="Мокап: Веб">
+      <div>
+        <div class="kicker">СЛАЙД 08 / МОКАП ВЕБ-ВЕРСИИ (ИНТЕРАКТИВНЫЙ)</div>
+        <h2 class="slide-title" style="font-size: clamp(1.6rem, 3vw, 2.6rem);">РАБОЧЕЕ ПРОСТРАНСТВО «ЛИТЕРЫ»</h2>
+      </div>
+
+      <div class="mockup-window">
+        <div class="mockup-bar">
+          <span>APP.LITERA.DESIGN // МОДУЛЬНАЯ ПОЛОСА</span>
+          <div class="mockup-tabs">
+            <button class="m-tab active" onclick="switchMockup(0, this)">01. ЧИСТАЯ ПОЛОСА</button>
+            <button class="m-tab" onclick="switchMockup(1, this)">02. РЕЖИМ МАРГИНАЛИЙ</button>
+            <button class="m-tab" onclick="switchMockup(2, this)">03. СБОРКА ЗИНА</button>
+          </div>
+        </div>
+        <div class="mockup-body" id="mockupBody">
+          <!-- Колонка 1: Индекс -->
+          <div class="m-col" style="background: var(--bg);">
+            <div class="mono-meta" style="font-weight: 700; color: var(--ink); margin-bottom: 10px;">ИНДЕКС ВЫПУСКА</div>
+            <div class="m-index-item active">01. Модульные сетки в веб-среде</div>
+            <div class="m-index-item">02. Психология восприятия шрифта</div>
+            <div class="m-index-item">03. Конспект лекции №4 (РАНХиГС)</div>
+            <div class="m-index-item">04. Архив цитат: Ноябрь 2026</div>
+          </div>
+          <!-- Колонка 2: Полоса текста -->
+          <div class="m-col" id="mockupCenter">
+            <div class="mono-meta" style="margin-bottom: 8px;">ИСТОЧНИК: ИССЛЕДОВАНИЕ // 6 МИН ЧТЕНИЯ</div>
+            <div class="m-article-title">ПОЧЕМУ ТИПОГРАФИКА ВОЗВРАЩАЕТ КОНТРОЛЬ НАД ВНИМАНИЕМ</div>
+            <p class="m-article-text">
+              Когда интерфейс избавляется от декоративных карточек, теней и боковых виджетов, <span class="m-highlight">мозг перестаёт тратить ресурс на фильтрацию визуального шума</span>. Чёткая модульная сетка превращает экран компьютера в спокойную книжную страницу.
+            </p>
+          </div>
+          <!-- Колонка 3: Маргиналии -->
+          <div class="m-col" style="background: var(--bg);" id="mockupRight">
+            <div class="mono-meta" style="font-weight: 700; color: var(--accent); margin-bottom: 10px;">МАРГИНАЛИИ (ПОЛЯ)</div>
+            <div class="m-margin-note">
+              <strong>Заметка #01:</strong> Использовать этот тезис во введении к курсовой работе.
+            </div>
+            <div class="m-margin-note" style="border-color: var(--ink);">
+              <strong>Тег:</strong> #визуальная_гигиена #сетки
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mono-meta">НАЖМИТЕ НА ВКЛАДКИ В ШАПКЕ МОКАПА ВЫШЕ, ЧТОБЫ ПЕРЕКЛЮЧИТЬ РЕЖИМ ИНТЕРФЕЙСА</div>
+    </section>
+
+    <!-- СЛАЙД 09: МОКАП 02 (МОБИЛЬНАЯ ВЕРСИЯ) -->
+    <section class="slide" data-title="Мокап: Мобайл">
+      <div>
+        <div class="kicker">СЛАЙД 09 / МОБИЛЬНОЕ ПРИЛОЖЕНИЕ И ЗИН</div>
+        <h2 class="slide-title" style="font-size: clamp(1.6rem, 3vw, 2.6rem);">ТИПОГРАФИКА В КАРМАНЕ</h2>
+      </div>
+      <div class="phones-wrap">
+        <!-- Экран 1 -->
+        <div class="phone-frame">
+          <div>
+            <div class="phone-status"><span>ЛИТЕРА IOS</span><span>01 // ИНДЕКС</span></div>
+            <div style="font-size: 1.8rem; font-weight: 900; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 14px;">
+              ОЧЕРЕДЬ<br>ЧТЕНИЯ <span style="color: var(--accent);">[07]</span>
+            </div>
+            <div style="border-top: 1.5px solid var(--border); padding: 8px 0; font-size: 12px;">
+              <strong>01.</strong> Экономика внимания и шрифт
+            </div>
+            <div style="border-top: 1px solid var(--border); padding: 8px 0; font-size: 12px;">
+              <strong>02.</strong> Локальный и облачный AI в медиа
+            </div>
+            <div style="border-top: 1px solid var(--border); padding: 8px 0; font-size: 12px;">
+              <strong>03.</strong> Швейцарский плакат 1958 года
+            </div>
+          </div>
+          <div class="mono-meta" style="border-top: 1px solid var(--border); padding-top: 8px;">НАВИГАЦИЯ ОДНИМ ПАЛЬЦЕМ ПО ИНДЕКСУ</div>
+        </div>
+
+        <!-- Экран 2 -->
+        <div class="phone-frame">
+          <div>
+            <div class="phone-status"><span>ЛИТЕРА IOS</span><span>02 // РИДЕР</span></div>
+            <div class="mono-meta" style="color: var(--accent); margin-bottom: 6px;">ВЫДЕЛЕНА ЦИТАТА</div>
+            <p style="font-size: 13px; line-height: 1.5; margin-bottom: 12px;">
+              «Хорошая типографика невидима, пока она служит смыслу, и монументальна, когда задаёт структуру».
+            </p>
+            <div style="background: var(--surface); border-left: 3px solid var(--accent); padding: 8px; font-size: 11px;">
+              + Заметка на поле: добавить в подборку «Дизайн-код».
+            </div>
+          </div>
+          <div style="background: var(--ink); color: var(--bg); text-align: center; padding: 8px; font-family: var(--font-mono); font-size: 11px;">
+            СОХРАНИТЬ В ВЫПУСК →
+          </div>
+        </div>
+
+        <!-- Экран 3: Обложка сгенерированного PDF-зина -->
+        <div class="phone-frame" style="background: var(--ink); color: var(--bg);">
+          <div>
+            <div class="phone-status" style="border-color: #444; color: #AAA;"><span>PDF-ЭКСПОРТ</span><span>ВЫПУСК #12</span></div>
+            <div style="font-size: 2.3rem; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin-top: 10px;">
+              ДАЙДЖЕСТ<br>НЕДЕЛИ<span style="color: var(--accent);">.</span>
+            </div>
+          </div>
+          <div>
+            <div style="height: 6px; background: var(--accent); width: 65%; margin-bottom: 12px;"></div>
+            <div class="mono-meta" style="color: #CCC;">
+              14 ЦИТАТ · 4 ИСТОЧНИКА<br>СВЕРСТАНО АВТОМАТИЧЕСКИ В ЛИТЕРЕ
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЛАЙД 10: КАК ЭТО РАБОТАЕТ -->
+    <section class="slide" data-title="Как работает">
+      <div>
+        <div class="kicker">СЛАЙД 10 / МЕХАНИКА РАБОТЫ СЕРВИСА</div>
+        <h2 class="slide-title">ЧЕТЫРЕ ШАГА ОТ ССЫЛКИ ДО ГОТОВОГО КОНСПЕКТА</h2>
+      </div>
+      <div class="grid-4">
+        <div class="cell">
+          <div class="cell-num">ШАГ 01 // ИМПОРТ</div>
+          <h3>ОТПРАВЬТЕ МАТЕРИАЛ</h3>
+          <p>Вставьте ссылку на статью, загрузите PDF-файл или перешлите голосовое сообщение боту «ЛИТЕРЫ» в Telegram.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ШАГ 02 // ПАРСИНГ</div>
+          <h3>АВТО-ОЧИСТКА И СЕТКА</h3>
+          <p>Движок удаляет рекламу, меню и лишние блоки, разбивает текст на смысловые модули и выстраивает типографическую полосу.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ШАГ 03 // РАБОТА</div>
+          <h3>ПОМЕТКИ НА ПОЛЯХ</h3>
+          <p>Выделяйте ключевые абзацы одним движением — сервис автоматически создаёт карточку маргиналии с привязкой к источнику.</p>
+        </div>
+        <div class="cell">
+          <div class="cell-num">ШАГ 04 // ЭКСПОРТ</div>
+          <h3>ВЫПУСК ИЛИ КОНСПЕКТ</h3>
+          <p>Выгружайте подборку в Notion, Markdown или скачивайте готовый PDF-зин в швейцарской вёрстке для защиты или рассылки.</p>
+        </div>
+      </div>
+      <div class="mono-meta">СИНХРОНИЗАЦИЯ МЕЖДУ ВЕБ-ВЕРСИЕЙ И СМАРТФОНОМ ЗА 0.3 СЕКУНДЫ</div>
+    </section>
+
+    <!-- СЛАЙД 11: ВЫВОДЫ И АВТОРЫ -->
+    <section class="slide" data-title="Выводы и авторы">
+      <div>
+        <div class="kicker">СЛАЙД 11 / ВЫВОДЫ И АВТОРЫ ПРОЕКТА</div>
+        <h2 class="slide-title">ТИПОГРАФИКА КАК КОНКУРЕНТНОЕ ПРЕИМУЩЕСТВО</h2>
+      </div>
+      <div class="grid-2">
+        <div class="cell">
+          <div class="cell-num">ИТОГИ КОНЦЕПЦИИ</div>
+          <h3>ПОЧЕМУ «ЛИТЕРА» ВЗЛЕТИТ</h3>
+          <p style="margin-bottom: 12px;">
+            <strong>1. Единый язык формы и функции:</strong> стиль типографики здесь не украшение, а способ решить реальную проблему информационной усталости.
+          </p>
+          <p>
+            <strong>2. Снижение когнитивной нагрузки:</strong> пользователь быстрее читает, структурирует источники и собирает готовые материалы без ручной вёрстки.
+          </p>
+        </div>
+        <div class="cell" style="background: var(--ink); color: var(--bg);">
+          <div class="cell-num">АВТОРЫ ПРЕЗЕНТАЦИИ И ПРОДУКТА</div>
+          <div style="display: flex; flex-direction: column; gap: 14px; font-size: 1.05rem;">
+            <div><strong>01. Катя Чурюмова</strong> — концепция продукта, дизайн-система и вёрстка</div>
+            <div><strong>02. Полина Асташкина</strong> — исследование аудитории, продуктовая логика и контент</div>
+          </div>
+          <div class="mono-meta" style="color: #A8A69E; margin-top: 20px;">
+            УЧЕБНАЯ ГРУППА · ЗАДАНИЕ №4 · СТИЛЬ: ТИПОГРАФИКА · 2026
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Нижняя панель управления -->
+  <footer class="bottombar">
+    <div class="progress-track" id="progressTrack" style="width: 9.09%;"></div>
+    <div class="mono-meta" id="slideCounter" style="color: var(--ink); font-weight: 700;">
+      СЛАЙД 01 / 11 — ОБЛОЖКА
+    </div>
+    <div class="slide-dots" id="slideDots"></div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← НАЗАД</button>
+      <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">ДАЛЕЕ →</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsContainer = document.getElementById('slideDots');
+    const counter = document.getElementById('slideCounter');
+    const progressTrack = document.getElementById('progressTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let current = 0;
+
+    // Генерация кнопок-индексов слайдов
+    slides.forEach((slide, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'dot-btn' + (idx === 0 ? ' active' : '');
+      btn.textContent = String(idx + 1).padStart(2, '0');
+      btn.title = slide.dataset.title || `Слайд ${idx + 1}`;
+      btn.onclick = () => goToSlide(idx);
+      dotsContainer.appendChild(btn);
+    });
+
+    function goToSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[current].classList.remove('active');
+      dotsContainer.children[current].classList.remove('active');
+
+      current = index;
+      slides[current].classList.add('active');
+      dotsContainer.children[current].classList.add('active');
+
+      const num = String(current + 1).padStart(2, '0');
+      const total = String(slides.length).padStart(2, '0');
+      const title = (slides[current].dataset.title || '').toUpperCase();
+      counter.textContent = `СЛАЙД ${num} / ${total} — ${title}`;
+
+      progressTrack.style.width = `${((current + 1) / slides.length) * 100}%`;
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+    }
+
+    function changeSlide(delta) {
+      goToSlide(current + delta);
+    }
+
+    function toggleGrid() {
+      document.getElementById('gridOverlay').classList.toggle('active');
+      document.getElementById('gridBtn').classList.toggle('active');
+    }
+
+    // Интерактив внутри мокапа на Слайде 08
+    function switchMockup(mode, btn) {
+      document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+
+      const center = document.getElementById('mockupCenter');
+      const right = document.getElementById('mockupRight');
+
+      if (mode === 0) {
+        center.innerHTML = `
+          <div class="mono-meta" style="margin-bottom: 8px;">ИСТОЧНИК: ИССЛЕДОВАНИЕ // 6 МИН ЧТЕНИЯ</div>
+          <div class="m-article-title">ПОЧЕМУ ТИПОГРАФИКА ВОЗВРАЩАЕТ КОНТРОЛЬ НАД ВНИМАНИЕМ</div>
+          <p class="m-article-text">Когда интерфейс избавляется от декоративных карточек, теней и боковых виджетов, <span class="m-highlight">мозг перестаёт тратить ресурс на фильтрацию визуального шума</span>. Чёткая модульная сетка превращает экран компьютера в спокойную книжную страницу.</p>
+        `;
+        right.innerHTML = `
+          <div class="mono-meta" style="font-weight: 700; color: var(--accent); margin-bottom: 10px;">МАРГИНАЛИИ (ПОЛЯ)</div>
+          <div class="m-margin-note"><strong>Заметка #01:</strong> Использовать этот тезис во введении к курсовой работе.</div>
+          <div class="m-margin-note" style="border-color: var(--ink);"><strong>Тег:</strong> #визуальная_гигиена #сетки</div>
+        `;
+      } else if (mode === 1) {
+        center.innerHTML = `
+          <div class="mono-meta" style="margin-bottom: 8px;">РЕЖИМ СИНТЕЗА // СВЯЗЬ ТЕЗИСОВ</div>
+          <div class="m-article-title">3 ВЫДЕЛЕННЫЕ ЦИТАТЫ ИЗ СТАТЬИ</div>
+          <p class="m-article-text" style="border-left: 2px solid var(--accent); padding-left: 10px; margin-bottom: 10px;">«Оптимальная длина строки составляет 60–75 символов с пробелами».</p>
+          <p class="m-article-text" style="border-left: 2px solid var(--ink); padding-left: 10px;">«Контраст кеглей заменяет необходимость в цветных плашках и иконках».</p>
+        `;
+        right.innerHTML = `
+          <div class="mono-meta" style="font-weight: 700; color: var(--accent); margin-bottom: 10px;">СВЯЗАННЫЕ ИСТОЧНИКИ</div>
+          <div class="m-margin-note"><strong>Мюллер-Брокманн:</strong> Модульные системы в графическом дизайне (1981).</div>
+        `;
+      } else {
+        center.innerHTML = `
+          <div class="mono-meta" style="margin-bottom: 8px;">ПРЕДПРОСМОТР PDF-ЗИНА // ФОРМАТ A4</div>
+          <div style="border: 1.5px solid var(--ink); padding: 14px; background: var(--bg);">
+            <div style="font-size: 1.3rem; font-weight: 900; line-height: 0.95; margin-bottom: 8px;">ВЫПУСК #04: ТЕОРИЯ ВЁРСТКИ</div>
+            <div class="mono-meta">АВТОР ПОДБОРКИ: К. ЧУРЮМОВА · 6 СТРАНИЦ · ГОТОВО К ПЕЧАТИ</div>
+          </div>
+        `;
+        right.innerHTML = `
+          <div class="mono-meta" style="font-weight: 700; color: var(--accent); margin-bottom: 10px;">ПАРАМЕТРЫ ЭКСПОРТА</div>
+          <div class="m-margin-note">Сетка: 12 колонок<br>Шрифт: Inter 10/14 pt<br>Обложка: Авто-плакат</div>
+        `;
+      }
+    }
+
+    // Управление с клавиатуры
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        changeSlide(-1);
+      } else if (e.key.toLowerCase() === 'g' || e.key.toLowerCase() === 'п') {
+        toggleGrid();
+      }
+    });
+  </script>
+</body>
+</html>
